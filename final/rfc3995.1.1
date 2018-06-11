@@ -1,0 +1,100 @@
+#
+#Check a printer for conformance with rfc3995
+#
+#
+#Usage:
+#
+#	./ipptool printer-uri rfc3995.1.1
+#
+
+{
+
+    # The name of the test...
+	NAME "Print file using Print-Job"
+
+	# The operation to use
+	OPERATION Print-Job
+
+	# Attributes, starting in the operation group...
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR name requesting-user-name $user
+	ATTR mimeMediaType document-format $filetype
+    
+	GROUP job-attributes-tag
+	ATTR integer copies 1
+
+	FILE $filename
+
+	# What statuses are OK?
+	STATUS successful-ok
+	STATUS successful-ok-ignored-or-substituted-attributes
+
+	# What attributes do we expect?
+	EXPECT job-id
+	EXPECT job-uri        
+}
+
+{
+	NAME "Create Job subscription"
+	
+	OPERATION Create-Job-Subscriptions
+	
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR name requesting-user-name $user
+	ATTR integer notify-job-id $job-id
+
+#GROUP subscription-attributes-tag
+#ATTR keyword notify-pull-method ippget
+#ATTR keyword notify-events job-completed,job-progress,job-created
+#ATTR keyword notify-attributes notify-subscriber-user-name
+	
+	GROUP subscription-attributes-tag
+	ATTR keyword notify-pull-method ippget
+    ATTR keyword notify-events job-progress,job-completed,job-created
+    ATTR integer notify-time-interval 1
+
+	
+	STATUS successful-ok
+    
+    EXPECT notify-subscription-id
+}
+
+{
+    NAME "Get subscription attributes and check for "
+
+    OPERATION Get-subscription-attributes
+
+    GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+    ATTR name requesting-user-name $user
+    ATTR integer notify-subscription-id $notify-subscription-id
+    ATTR keyword requested-attributes all
+
+    EXPECT notify-pull-method           #working
+    EXPECT notify-events                #working
+    EXPECT notify-user-data             #working
+    EXPECT notify-charset               #not-working(needs debugging)
+    EXPECT notify-natural-language      #not-working(needs debugging)
+
+    #only for per-printer subscription objects
+    #but this shows up in per-job objects as well
+    EXPECT notify-lease-duration
+
+    EXPECT notify-time-interval         
+
+    EXPECT notify-subscription-id
+    EXPECT notify-sequence-number
+    EXPECT notify-lease-expiration-time     #only for per-printer subscription objects
+    EXPECT notify-printer-up-time
+    EXPECT notify-printer-uri
+    EXPECT notify-job-id
+    EXPECT notify-subscriber-user-name
+}

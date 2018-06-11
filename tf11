@@ -1,0 +1,124 @@
+{
+	# The name of the test...
+	NAME "Print test page using create-job"
+
+	# The resource to use for the POST
+	# RESOURCE /admin
+
+	# The operation to use
+	OPERATION create-job
+
+	# Attributes, starting in the operation group...
+	GROUP operation
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR name requesting-user-name $user
+
+	GROUP job
+	ATTR integer copies 1
+
+	# What statuses are OK?
+	STATUS successful-ok
+
+	# What attributes do we expect?
+	EXPECT job-id
+	EXPECT job-uri
+}
+
+{
+	NAME "Create Job subscription"
+	
+	OPERATION Create-Job-Subscriptions
+	
+	
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR name requesting-user-name $user
+	ATTR integer notify-job-id $job-id
+	
+#GROUP subscription-attributes-tag
+#ATTR keyword notify-pull-method ippget
+#ATTR keyword notify-events job-completed,job-progress,job-created
+#ATTR keyword notify-attributes notify-subscriber-user-name
+	
+	GROUP subscription-attributes-tag
+	ATTR keyword notify-pull-method ippget
+	ATTR keyword notify-events job-completed,job-created,job-progress
+	
+	STATUS successful-ok
+
+    EXPECT notify-subscription-id
+}
+
+{
+	# The name of the test...
+	NAME "Get events using Get-Notifications"
+
+	# The operation to use
+	OPERATION Get-Notifications
+
+	# The attributes to send
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR integer notify-subscription-ids $notify-subscription-id
+
+	# What statuses are OK?
+	STATUS successful-ok
+
+	# What attributes do we expect?
+	EXPECT notify-event OF-TYPE keyword
+	DISPLAY notify-event
+}
+
+{
+    
+	# The name of the test...
+	NAME "... and send-document"
+
+	# The resource to use for the POST
+	# RESOURCE /admin
+
+	# The operation to use
+	OPERATION send-document
+
+	# Attributes, starting in the operation group...
+	GROUP operation
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR integer job-id $job-id
+	ATTR name requesting-user-name $user
+	ATTR boolean last-document true
+
+	FILE $filename
+
+	# What statuses are OK?
+	STATUS successful-ok
+}
+
+{
+	# The name of the test...
+	NAME "Get events using Get-Notifications"
+
+	# The operation to use
+	OPERATION Get-Notifications
+
+	# The attributes to send
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR integer notify-subscription-ids $notify-subscription-id
+
+	# What statuses are OK?
+	STATUS successful-ok
+
+	# What attributes do we expect?
+	EXPECT notify-event OF-TYPE keyword
+	DISPLAY notify-event
+}

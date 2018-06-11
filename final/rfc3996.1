@@ -1,0 +1,147 @@
+#
+#Check a printer for conformance with rfc3996
+#
+#
+#Usage:
+#
+#	./ipptool printer-uri rfc3996.1
+#
+
+{
+    # get printer attributes and check support for REQUIRED attributes
+
+	NAME "Get printer attributes using Get-Printer-Attributes"
+	OPERATION Get-Printer-Attributes
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+
+	STATUS successful-ok
+
+	EXPECT charset-configured
+	EXPECT charset-supported
+	EXPECT compression-supported
+	EXPECT document-format-default
+	EXPECT document-format-supported
+	EXPECT generated-natural-language-supported
+	EXPECT ipp-versions-supported
+	EXPECT natural-language-configured
+	EXPECT pdl-override-supported
+	EXPECT printer-is-accepting-jobs
+	EXPECT printer-name
+	EXPECT printer-state
+	EXPECT printer-state-reasons
+	EXPECT printer-up-time
+	EXPECT printer-uri-supported
+	EXPECT queued-job-count
+	EXPECT uri-authentication-supported
+	EXPECT uri-security-supported
+    
+	EXPECT operations-supported WITH-VALUE 0x0016	# Create-Printer-Subscriptions
+	EXPECT operations-supported WITH-VALUE 0x0018	# Get-Subscription-Attributes
+	EXPECT operations-supported WITH-VALUE 0x0019	# Get-Subscriptions
+	EXPECT operations-supported WITH-VALUE 0x001A	# Renew-Subscription
+	EXPECT operations-supported WITH-VALUE 0x001B	# Cancel-Subscription
+	EXPECT operations-supported WITH-VALUE 0x001C	# Get-Notifications
+	
+	EXPECT notify-pull-method-supported WITH-VALUE "ippget"
+	EXPECT notify-events-supported
+	EXPECT notify-events-default
+	EXPECT notify-max-events-supported WITH-VALUE >1
+	EXPECT notify-lease-duration-default WITH-VALUE >0 
+	EXPECT notify-lease-duration-supported
+
+	EXPECT ippget-event-life OF-TYPE integer WITH-VALUE >14		# checking ippget-event-life
+}
+
+{
+    # create printer subscription
+
+	NAME "Create a pull printer subscription"
+	OPERATION Create-Printer-Subscription
+
+    GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+    ATTR name requesting-user-name $user
+
+    GROUP subscription-attributes-tag
+	ATTR keyword notify-pull-method ippget
+	ATTR keyword notify-events printer-config-changed,printer-state-changed
+    ATTR octetString notify-user-data ippuser
+
+	STATUS successful-ok
+
+	EXPECT notify-subscription-id OF-TYPE integer WITH-VALUE >0 IN-GROUP subscription-attributes-tag
+	DISPLAY notify-subscription-id
+}
+
+# How to create event (like by using disable-printer operation which is present in next test), while waiting for the response to the get-notifications request?
+# i.e. how to make next request before getting previous response?
+
+#{
+#	NAME "Get-Notifications conformance check (including event wait mode)"
+#	OPERATION Get-Notifications
+#
+#	GROUP operation-attributes-tag
+#	ATTR charset attributes-charset utf-8
+#	ATTR language attributes-natural-language en
+#	ATTR uri printer-uri $uri
+#	ATTR name requesting-user-name $user
+#	ATTR integer notify-subscription-ids $notify-subscription-id
+#	ATTR boolean notify-wait true	
+#
+#	STATUS successful-ok
+#	STATUS successful-ok-events-complete
+#
+#	EXPECT notify-subscription-id OF-TYPE integer WITH-VALUE >0
+#	EXPECT notify-printer-uri
+#	EXPECT notify-subscribed-event
+#	#EXPECT-ALL printer-up-time OF-TYPE integer WITH-VALUE >0			# not working
+#	EXPECT notify-sequence-number OF-TYPE integer WITH-VALUE >-1
+#	EXPECT notify-charset OF-TYPE charset WITH-VALUE "utf-8"
+#	EXPECT notify-natural-language WITH-VALUE "en"	
+#	#EXPECT notify-user-data											# not working
+#	EXPECT notify-text
+#	EXPECT printer-state
+#	EXPECT printer-state-reasons
+#	#EXPECT printer-is-accepting-jobs									# not working
+#	
+#}
+
+{
+	# DELAY 10 	 # will be used to check notify-wait working.
+
+    # disable-printer to create an event
+
+	NAME "Disable-Printer"
+
+	OPERATION Disable-Printer
+	VERSION 2.0
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR naturalLanguage attributes-natural-language en
+	ATTR uri printer-uri $uri
+
+	STATUS successful-ok
+}
+
+{
+    # enable-printer to create another event and get the printer working again
+
+	NAME "Enable-Printer"
+
+	OPERATION Enable-Printer
+	VERSION 2.0
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR naturalLanguage attributes-natural-language en
+	ATTR uri printer-uri $uri
+
+	STATUS successful-ok
+}

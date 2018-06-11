@@ -1,0 +1,10 @@
+{
+    VERSION 2.0
+    OPERATION Get-Printer-Attributes
+    REQUEST-ID 21
+    GROUP operation-attributes-tag
+    ATTR charset "attributes-charset" "utf-8"
+    ATTR naturalLanguage "attributes-natural-language" "en"
+    ATTR uri "printer-uri" "ipp://rang-de-basanti:8001/ipp/print"
+    ATTR name "requesting-user-name" "lakshayb"
+}

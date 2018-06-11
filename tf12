@@ -1,0 +1,45 @@
+{
+    # get subscription attributes
+
+    NAME "Get subscription attributes and check for "
+
+    OPERATION Get-subscription-attributes
+
+    GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+    ATTR name requesting-user-name $user
+    ATTR integer notify-subscription-id $id
+    ATTR keyword requested-attributes alls
+
+    STATUS successful-ok
+
+    EXPECT notify-pull-method            #working
+    EXPECT notify-events                #working
+    EXPECT notify-user-data             #working
+    EXPECT notify-charset               #not-working(needs debugging)
+    EXPECT notify-natural-language      #not-working(needs debugging)
+
+    #only for per-printer subscription objects
+    #but this shows up in per-job objects as well
+    EXPECT notify-lease-duration
+
+    #The notify-time-interval attribute is useful only for per-job subscription objects.
+    #The object should have job-progress listed in its notify-events attribute
+    #The client needs to send the value of this attribute during subscription-creation
+    #not-working even when above conditions satified (see rfc3995.1.1)
+    #EXPECT notify-time-interval        
+
+    EXPECT notify-subscription-id       #working
+    EXPECT notify-sequence-number       #working
+    EXPECT notify-lease-expiration-time     #only for per-printer subscription objects, working
+    EXPECT notify-printer-up-time           #only for per-printer subscription objects, working
+    EXPECT notify-printer-uri          #working
+    
+    #notify-job-id is used for per-job subscription objects.
+    #not-working for them. (see rfc3995.1.1)
+    #EXPECT notify-job-id                
+    
+    EXPECT notify-subscriber-user-name  #working
+}

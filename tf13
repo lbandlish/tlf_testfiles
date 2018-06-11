@@ -1,0 +1,63 @@
+# Print a test page using print-job
+{
+	# The name of the test...
+	NAME "Print file using Print-Job"
+
+	# The operation to use
+	OPERATION Print-Job
+
+	# Attributes, starting in the operation group...
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR name requesting-user-name $user
+	ATTR mimeMediaType document-format $filetype
+
+	GROUP job-attributes-tag
+	ATTR integer copies 1
+
+	FILE $filename
+
+	# What statuses are OK?
+	STATUS successful-ok
+	STATUS successful-ok-ignored-or-substituted-attributes
+
+	# What attributes do we expect?
+	EXPECT job-id DEFINE-VALUE hello
+	EXPECT job-uri
+}
+
+#
+#Create per-job subscription object
+#
+#Usage:
+#
+#	./ipptool [-d id=NNN] printer-uri <filename>
+#
+{
+	NAME "Create Job subscription"
+	
+	OPERATION Create-Job-Subscriptions
+	
+	
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR name requesting-user-name $user
+	ATTR integer notify-job-id $hello
+	
+#GROUP subscription-attributes-tag
+#ATTR keyword notify-pull-method ippget
+#ATTR keyword notify-events job-completed,job-progress,job-created
+#ATTR keyword notify-attributes notify-subscriber-user-name
+	
+	GROUP subscription-attributes-tag
+	ATTR keyword notify-pull-method ippget
+	ATTR keyword notify-events job-completed,job-created
+	ATTR charset notify-charset us-ascii
+
+	STATUS successful-ok
+}
+	

@@ -1,0 +1,370 @@
+#
+#Check a printer for conformance with rfc3995
+#
+#
+#Usage:
+#
+#	./ipptool -f FILENAME -d document-uri=uri printer-uri rfc3995.1
+#
+{
+    # get printer attributes and check support for REQUIRED attributes
+
+	NAME "Get printer attributes using Get-Printer-Attributes"
+	OPERATION Get-Printer-Attributes
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+
+	STATUS successful-ok
+
+	EXPECT charset-configured
+	EXPECT charset-supported
+	EXPECT compression-supported
+	EXPECT document-format-default
+	EXPECT document-format-supported
+	EXPECT generated-natural-language-supported
+	EXPECT ipp-versions-supported
+	EXPECT natural-language-configured
+	EXPECT pdl-override-supported
+	EXPECT printer-is-accepting-jobs
+	EXPECT printer-name
+	EXPECT printer-state
+	EXPECT printer-state-reasons
+	EXPECT printer-up-time
+	EXPECT printer-uri-supported
+	EXPECT queued-job-count
+	EXPECT uri-authentication-supported
+	EXPECT uri-security-supported
+    
+	EXPECT operations-supported WITH-VALUE 0x0016	# Create-Printer-Subscriptions
+	EXPECT operations-supported WITH-VALUE 0x0018	# Get-Subscription-Attributes
+	EXPECT operations-supported WITH-VALUE 0x0019	# Get-Subscriptions
+	EXPECT operations-supported WITH-VALUE 0x001A	# Renew-Subscription
+	EXPECT operations-supported WITH-VALUE 0x001B	# Cancel-Subscription
+	
+	EXPECT notify-pull-method-supported WITH-VALUE "ippget"
+	EXPECT notify-events-supported
+	EXPECT notify-events-default
+	EXPECT notify-max-events-supported WITH-VALUE >1
+	EXPECT notify-lease-duration-default WITH-VALUE >0 
+	EXPECT notify-lease-duration-supported
+
+	#crucial to determine whether to check for notify-time-interval. (DEFINE-MATCH needs to be added here.) Though notify-time-interval not working.
+	EXPECT ?notify-events-supported WITH-VALUE job-progress
+}
+
+{
+    # create printer subscription
+
+	NAME "Create a pull printer subscription"
+	OPERATION Create-Printer-Subscription
+
+    GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+    ATTR name requesting-user-name $user
+
+    # using subscription-attributes-tag in request to check for its compatibility with printer
+
+    GROUP subscription-attributes-tag
+	ATTR keyword notify-pull-method ippget
+	ATTR keyword notify-events printer-config-changed,printer-state-changed
+    ATTR octetString notify-user-data ippuser
+
+	STATUS successful-ok
+
+    # expecting notify-subscription-id in group subscription-attributes-tag to check for its compatibility with printer
+
+	EXPECT notify-subscription-id OF-TYPE integer WITH-VALUE >0 IN-GROUP subscription-attributes-tag
+	EXPECT notify-subscription-id DEFINE-VALUE renew-cancel-id	# this id will be later used in renew-subscription and cancel-subscription operations.
+	DISPLAY notify-subscription-id
+}
+
+{
+    # get subscription attributes and check for REQUIRED attributes
+
+    NAME "Get subscription attributes"
+    OPERATION Get-subscription-attributes
+
+    GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+    ATTR name requesting-user-name $user
+    ATTR integer notify-subscription-id $notify-subscription-id
+    ATTR keyword requested-attributes all
+
+    STATUS successful-ok
+
+    EXPECT notify-pull-method WITH-VALUE "ippget"
+    EXPECT notify-events WITH-VALUE "printer-config-changed"
+	EXPECT notify-events WITH-VALUE "printer-state-changed"
+    EXPECT notify-user-data WITH-VALUE "ippuser"
+    
+	#EXPECT notify-charset WITH-VALUE "utf-8"           #not-working - shows up in get-notifications
+														#but doesn't work properly,
+														#even on setting notify-charset to us-ascii in create-subscription request,
+														#it shows up as utf-8 in get-notifications response.
+    
+	#EXPECT notify-natural-language WITH-VALUE "en"     #not-working - shows up in get-notifications, but might have same problem as notify-charset
+
+    #only for per-printer subscription objects
+    #but this shows up in per-job objects as well
+    EXPECT notify-lease-duration
+
+    #The notify-time-interval attribute is useful only for per-job subscription objects.
+    #The object should have job-progress listed in its notify-events attribute
+    #The client needs to send the value of this attribute during subscription-creation
+    #not-working even when above conditions satified (see rfc3995.1.1)
+    #EXPECT notify-time-interval        
+
+    EXPECT notify-subscription-id OF-TYPE integer WITH-VALUE >0    	
+    EXPECT notify-sequence-number OF-TYPE integer WITH-VALUE >-1    
+    EXPECT notify-lease-expiration-time OF-TYPE integer WITH-VALUE >-1    #only for per-printer subscription objects, but shows up in per-job subscription objects also.
+    EXPECT notify-printer-up-time OF-TYPE integer WITH-VALUE >0           #only for per-printer subscription objects, but shows up in per-job subscription objects also.
+    EXPECT notify-printer-uri OF-TYPE uri WITH-VALUE "$uri"
+    
+    #notify-job-id is used for per-job subscription objects.
+    #not-working for them, but shows up in get-notifications for them.
+    #EXPECT notify-job-id OF-TYPE integer WITH-VALUE >0
+    
+    EXPECT notify-subscriber-user-name OF-TYPE name
+
+	EXPECT !notify-status-code
+}
+
+{
+    # disable-printer to create an event
+
+	NAME "Disable-Printer"
+
+	OPERATION Disable-Printer
+	VERSION 2.0
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR naturalLanguage attributes-natural-language en
+	ATTR uri printer-uri $uri
+
+	STATUS successful-ok
+}
+
+{
+    # enable-printer to create another event and get the printer working again
+
+	NAME "Enable-Printer"
+
+	OPERATION Enable-Printer
+	VERSION 2.0
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR naturalLanguage attributes-natural-language en
+	ATTR uri printer-uri $uri
+
+	STATUS successful-ok
+}
+
+{
+    # get the notifications and find event-attributes
+
+	NAME "Get events using Get-Notifications"
+	OPERATION Get-Notifications
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR integer notify-subscription-ids $notify-subscription-id
+
+	STATUS successful-ok
+
+	EXPECT notify-subscription-id OF-TYPE integer WITH-VALUE >0
+	EXPECT notify-printer-uri OF-TYPE uri WITH-VALUE $uri
+	EXPECT notify-subscribed-event
+	EXPECT printer-up-time OF-TYPE integer WITH-VALUE >0
+	EXPECT notify-sequence-number OF-TYPE integer WITH-VALUE >-1
+	EXPECT notify-charset OF-TYPE charset WITH-VALUE "utf-8"
+	EXPECT notify-natural-language WITH-VALUE "en"
+	EXPECT notify-user-data
+	EXPECT notify-text
+}
+
+{
+    # testing job creation operations - extensions for notifications 1 - Print-Job
+
+	NAME "Print file using Print-Job"
+	OPERATION Print-Job
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR name requesting-user-name $user
+	ATTR mimeMediaType document-format $filetype
+
+	GROUP job-attributes-tag
+	ATTR integer copies 1
+
+	GROUP subscription-attributes-tag
+	ATTR keyword notify-pull-method ippget
+	ATTR keyword notify-events job-completed,job-created
+
+	FILE $filename
+
+	STATUS successful-ok
+	STATUS successful-ok-ignored-or-substituted-attributes
+
+	EXPECT job-id
+	EXPECT job-uri
+	EXPECT notify-subscription-id OF-TYPE integer WITH-VALUE >0
+}
+
+{
+    # testing job creation operations - extensions for notifications 2 - Print-URI
+
+	NAME "Print file using Print-URI"
+	OPERATION Print-URI
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR name requesting-user-name $user
+	ATTR name document-name $document-uri
+	ATTR uri document-uri $document-uri
+
+	GROUP job-attributes-tag
+	ATTR integer copies 1
+
+    GROUP subscription-attributes-tag
+	ATTR keyword notify-pull-method ippget
+	ATTR keyword notify-events job-completed,job-created
+
+	STATUS successful-ok
+	STATUS successful-ok-ignored-or-substituted-attributes
+
+	EXPECT job-id
+	EXPECT job-uri
+    EXPECT notify-subscription-id OF-TYPE integer WITH-VALUE >0
+}
+
+{
+    # testing job creation operations - extensions for notifications 3 - Create-Job
+
+	NAME "Print test page using create-job"
+    RESOURCE /admin
+	OPERATION create-job
+
+	GROUP operation
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR name requesting-user-name $user
+
+	GROUP job
+	ATTR integer copies 1
+
+    GROUP subscription-attributes-tag
+	ATTR keyword notify-pull-method ippget
+	ATTR keyword notify-events job-completed,job-created
+
+	STATUS successful-ok
+
+	EXPECT job-id
+	EXPECT job-uri
+    EXPECT notify-subscription-id OF-TYPE integer WITH-VALUE >0
+
+    # should I send a send-document request as well? (create-job is enough to test)
+}
+
+{
+	# testing get-subscriptions operation
+
+	NAME "get-subscriptions"
+	OPERATION Get-Subscriptions
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR name requesting-user-name $user
+	ATTR integer limit 10 							#10 is just a random value.
+	ATTR keyword requested-attributes all
+	ATTR boolean my-subscriptions true
+
+	STATUS successful-ok
+	
+	EXPECT notify-pull-method           #working
+    EXPECT notify-events                #working
+    EXPECT notify-user-data  WITH-VALUE "ippuser"           #working
+    
+	#EXPECT notify-charset               #not-working(needs debugging) - shows up in get-notifications
+										#but doesn't work properly, even on setting notify-charset to us-ascii in create-subscription request,
+										#it shows up as utf-8 in get-notifications response.
+    
+	#EXPECT notify-natural-language      #not-working(needs debugging) - shows up in get-notifications, but might have same problem as notify-charset
+
+    #only for per-printer subscription objects
+    #but this shows up in per-job objects as well
+    EXPECT notify-lease-duration
+
+    #The notify-time-interval attribute is useful only for per-job subscription objects.
+    #The object should have job-progress listed in its notify-events attribute
+    #The client needs to send the value of this attribute during subscription-creation
+    #not-working even when above conditions satified (see rfc3995.1.1)
+    #EXPECT notify-time-interval        
+
+    EXPECT notify-subscription-id       #working
+    EXPECT notify-sequence-number       #working
+    EXPECT notify-lease-expiration-time     #only for per-printer subscription objects, working
+    EXPECT notify-printer-up-time           #only for per-printer subscription objects, working
+    EXPECT notify-printer-uri          #working
+    
+    #notify-job-id is used for per-job subscription objects.
+    #not-working for them (see rfc3995.1.1), but shows up in get-notifications.
+    #EXPECT notify-job-id                
+    
+    EXPECT notify-subscriber-user-name  #working
+
+	EXPECT !notify-status-code
+}
+
+{
+	# testing renew-subscription operation
+
+	NAME "renew-subscription"
+	OPERATION "Renew-Subscription"
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR name requesting-user-name $user
+	ATTR integer notify-subscription-id $renew-cancel-id
+	#ATTR integer notify-lease-duration 0					#not working
+
+	STATUS successful-ok
+
+	#EXPECT notify-lease-duration WITH-VALUE >0				#not working
+}
+
+{
+	# testing cancel-subscription operation
+
+	NAME "cancel-subscription"
+	OPERATION "Cancel-Subscription"
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR name requesting-user-name $user
+	ATTR integer notify-subscription-id $renew-cancel-id
+
+	STATUS successful-ok
+
+}
