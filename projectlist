@@ -1,11 +1,11 @@
 ippfuzz​ : Fuzz test generator for ipptool                              doc length
-RFC 3995​ : IPP Event Notifications and Subscription                    
-RFC 3996 : ippget method                                               
-PWG 5100.13-2012​ : IPP: Job and Printer Extensions – Set 3 (JPS3)      86
+RFC 3995​ : IPP Event Notifications and Subscription                        done
+RFC 3996 : ippget method                                                   done
+PWG 5100.13-2012​ : IPP: Job and Printer Extensions – Set 3 (JPS3)      86  
 PWG 5100.11-2010​ : IPP: Job and Printer Extensions - Set 2 (JPS2)      82
-PWG 5100.9-2009​ : IPP Printer State Extensions                         73
-PWG 5100.7-2003​ : IPP Job Extensions                                   42
+PWG 5100.9-2009​ : IPP Printer State Extensions                         73  needs guidance
+PWG 5100.7-2003​ : IPP Job Extensions                                   42  needs features
 Test Files for PWG 5100.1-2017​ : IPP Finishings 2.1 (FIN)              69
-PWG 5100.6-2003​ : IPP Page Overrides                                   18
-PWG 5100.5-2003​ : IPP Document Object                                  78
+PWG 5100.6-2003​ : IPP Page Overrides                                   18  done
+PWG 5100.5-2003​ : IPP Document Object                                  78  needs features
 PWG 5100.3-2001​ : Production Printing Attributes – Set1                76

@@ -14,7 +14,9 @@
 	GROUP operation
 	ATTR charset attributes-charset utf-8
 	ATTR language attributes-natural-language en
-	ATTR uri job-uri $var
+	ATTR uri printer-uri $uri
+	ATTR integer job-id $var
+	ATTR name requesting-user-name $user
 #	ATTR keyword requested-attributes job-media-sheets-completed,job-state
 
 	# What statuses are OK?

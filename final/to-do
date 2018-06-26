@@ -1,0 +1,31 @@
+Possible changes to rfc3995:
+
+Add last-document true attribute to send-document requests, see override.1.test to see how.
+Add requesting-user-name to send-document requests and create-job requests.
+
+rfc3995
+
+#- The extra EXPECT lines you copied from the get-printer-attributes.test file are unnecessary and can be removed.
+#- Please check for the Create-Job-Subscriptions operation and use DEFINE-MATCH so you can test that optional operation.
+#- The 'none' value is required in notify-events-supported (not listed)
+#- Should check the value of 'notify-user-data' in the Get-Subscription-Attributes test.
+#- WRT the notify-charset tests, section 5.3.6 of RFC 3995 says that a printer can substitute the attributes-charset value if the requested charset is not supported. But it *is* a bug if we are not returning the attribute in get-subcription-attributes.
+#- WRT notify-time-interval, should do "EXPECT !notify-time-interval" since that attribute should not be present.
+#- The Print-URI operation test needs to be conditional - Print-URI is an optional operation, so check at the beginning in operations-supported and DEFINE-MATCH HAVE_PRINT_URI...
+#- The Create-Job operation test needs to be conditional - Create-Job is an optional operation...
+#- After the Cancel-Subscription test, maybe try doing a get-notifications request for the canceled subscription to verify it has been canceled (should get status client-error-not-found).
+#- Add ISSUE in comments for bugs.
+
+"rfc3996.2.test":
+
+#- The extra EXPECT lines you copied from the get-printer-attributes.test file are unnecessary and can be removed.
+#- You can just test for the RFC 3996 operation and attributes here.
+#- Add ISSUE in comments for bugs.
+
+
+
+INTERESTING FACTS (MAY ACCOUNT FOR BUGS):
+
+#Test file naming convention should be:
+Base tests: "pwg5100.N.test" or "rfcNNNN.test"
+Individual tests: "pwg5100.N-test-name.test" or "rfcNNNN-test-name.test"
