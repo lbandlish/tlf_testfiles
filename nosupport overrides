@@ -1,0 +1,82 @@
+{
+	# Another print-job request
+	# Here, a random unsupported member for override, "nosupport" has been supplied.
+	# Also, ipp-attribute-fidelity is false.
+	# Therefore the client must accept the request.
+	# The status should be successful-ok-ignored-or-substituted-attributes.
+
+	NAME "Checking overrides on print-job request - 4"
+	OPERATION Print-Job
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR name requesting-user-name $user
+	ATTR mimeMediaType document-format $filetype
+	ATTR boolean ipp-attribute-fidelity false
+
+	GROUP job-attributes-tag
+	ATTR integer copies 2
+	ATTR collection overrides {
+		MEMBER rangeOfInteger pages 1-2
+		MEMBER rangeOfInteger document-numbers 1-1
+		MEMBER rangeOfInteger nosupport 1-2
+	}
+
+	FILE $filename
+
+	STATUS successful-ok-ignored-or-substituted-attributes
+
+	EXPECT job-id OF-TYPE integer IN-GROUP job-attributes-tag WITH-VALUE >0 COUNT 1
+	EXPECT job-uri OF-TYPE uri IN-GROUP job-attributes-tag COUNT 1
+}
+
+{
+	NAME "Get job info with get-job-attributes"
+
+	OPERATION Get-Job-Attributes
+
+	GROUP operation
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR integer job-id $job-id
+	ATTR name requesting-user-name $user
+
+	STATUS successful-ok
+	
+	EXPECT job-uri
+	EXPECT job-state
+}
+
+{
+	# Another print-job request
+	# Here, a random unsupported member for override, "nosupport" has been supplied.
+	# Also, ipp-attribute-fidelity is true.
+	# Therefore the client must reject the request.
+	# The status should be client-error-attributes-or-values-not-supported.
+
+	NAME "Checking overrides on print-job request - 5"
+	OPERATION Print-Job
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+	ATTR name requesting-user-name $user
+	ATTR mimeMediaType document-format $filetype
+	ATTR boolean ipp-attribute-fidelity true
+
+	GROUP job-attributes-tag
+	ATTR integer copies 2
+	ATTR collection overrides {
+		MEMBER rangeOfInteger pages 1-2
+		MEMBER rangeOfInteger document-numbers 1-1
+		MEMBER rangeOfInteger nosupport 1-2
+	}
+
+	FILE $filename
+
+	STATUS client-error-attributes-or-values-not-supported
+}

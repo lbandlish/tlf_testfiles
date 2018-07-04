@@ -22,6 +22,30 @@ rfc3995
 #- You can just test for the RFC 3996 operation and attributes here.
 #- Add ISSUE in comments for bugs.
 
+override.test
+Focus on a few Job Template attributes.  The point is not to exhaustively test things but to cover the basics.  For this test I would focus on the "finishings" or "finishings-col", "media" or "media-col", and "sides" attributes.  Specific things to test (and maybe I should add example files for these tests to the repository) that would likely be automated/used are:
+ 
+- First page on letterhead, following pages on plain paper.
+  (this is a simple media-col/media-type override for pages 1-1)
+ 
+- Initial pages two-sided and stapled, followed by an envelope (single-sided and not stapled)
+  (this has sides, finishings, and media overrides, and can be broken up into different tests
+  if all three can't be done)
+ 
+The spec also calls out a number-up example (first copy is 4-up, remaining copies are 1-up) but I don't think that matches up with 2018 printing need
+
+"pwg5100.7.test"
+
+- Focus on what optional attributes are supported and then make sure the corresponding xxx-default
+  is there if xxx-supported is there, and that they are the correct type, count, etc.
+- Focus on a short list of the Job Template attributes: output-device and print-content-optimize.
+  Most of the operation attributes are defined in other specs, and document-format-details and
+  document-format-version have problems (which I will be discussing in the IPP workgroup...)
+- This particular specification has no required attributes or semantics, so the testing should 
+  just be limited to validating that any xxx-default and xxx-supported attributes have the right types
+  and values (EXPECT ?) and then a few job print tests from the short list (above).
+
+** can add WITH-VALUE tags to output-device and print-content-optimize, once the values are final for them.
 
 
 INTERESTING FACTS (MAY ACCOUNT FOR BUGS):
@@ -29,3 +53,5 @@ INTERESTING FACTS (MAY ACCOUNT FOR BUGS):
 #Test file naming convention should be:
 Base tests: "pwg5100.N.test" or "rfcNNNN.test"
 Individual tests: "pwg5100.N-test-name.test" or "rfcNNNN-test-name.test"
+
+
