@@ -45,8 +45,8 @@ The spec also calls out a number-up example (first copy is 4-up, remaining copie
   just be limited to validating that any xxx-default and xxx-supported attributes have the right types
   and values (EXPECT ?) and then a few job print tests from the short list (above).
 
-** can add WITH-VALUE tags to output-device and print-content-optimize, once the values are final for them.
-
+**  Need to remove COUNT 1 for xxx-default attributes like finishings-default. 
+    (it has type 1 set of enum, and its quite logical that more than 1 finishing could be applied by default)
 
 INTERESTING FACTS (MAY ACCOUNT FOR BUGS):
 
