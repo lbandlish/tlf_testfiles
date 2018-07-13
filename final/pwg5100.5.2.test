@@ -4,7 +4,7 @@
 #
 #Usage:
 #
-#	./ipptool -f FILENAME -d "document-uri=URI" printer-uri pwg5100.5.1.test
+#	./ipptool -f FILENAME -d "document-uri=URI" printer-uri pwg5100.5.2.test
 #
 {
 	NAME "Get printer attributes using Get-Printer-Attributes"
@@ -17,12 +17,8 @@
 
 	STATUS successful-ok
 
-	EXPECT operations-supported OF-TYPE enum IN-GROUP printer-attributes-tag WITH-VALUE 0x0034 DEFINE-MATCH HAVE_GET_DOCUMENT_ATTRIBUTES	# Get-Document-Attributes
 	EXPECT operations-supported OF-TYPE enum IN-GROUP printer-attributes-tag WITH-VALUE 0x0037 DEFINE-MATCH HAVE_SET_DOCUMENT_ATTRIBUTES	# Set-Document-Attributes
-	EXPECT operations-supported OF-TYPE enum IN-GROUP printer-attributes-tag WITH-VALUE 0x0033 DEFINE-MATCH HAVE_CANCEL_DOCUMENT			# Cancel-Document
-
     EXPECT operations-supported OF-TYPE enum IN-GROUP printer-attributes-tag WITH-VALUE 0x0003 DEFINE-MATCH HAVE_PRINT_URI                  # Print-URI
-    EXPECT operations-supported OF-TYPE enum IN-GROUP printer-attributes-tag WITH-VALUE 0x0005 DEFINE-MATCH HAVE_CREATE_JOB                 # Create-job
 	EXPECT operations-supported OF-TYPE enum IN-GROUP printer-attributes-tag WITH-VALUE 0x0007 DEFINE-MATCH HAVE_SEND_URI		            # Send-URI
 
 	# Checking REQUIRED attributes.
@@ -65,8 +61,6 @@
 }
 
 {
-	SKIP-IF-NOT-DEFINED HAVE_GET_DOCUMENT_ATTRIBUTES
-
 	NAME "Get document attributes"
 	OPERATION Get-Document-Attributes
 
@@ -123,7 +117,6 @@
 
 {
 	SKIP-IF-NOT-DEFINED HAVE_SET_DOCUMENT_ATTRIBUTES
-	SKIP-IF-NOT-DEFINED HAVE_GET_DOCUMENT_ATTRIBUTES
 
 	NAME "Get document attributes"
 	OPERATION Get-Document-Attributes
@@ -148,8 +141,6 @@
 }
 
 {
-    SKIP-IF-NOT-DEFINED HAVE_CREATE_JOB
-
 	NAME "Create job"
     RESOURCE /admin
 	OPERATION create-job
@@ -170,8 +161,6 @@
 }
 
 {
-	SKIP-IF-NOT-DEFINED HAVE_CREATE_JOB
-
 	NAME "testing document-attributes in send-document operation"
 	OPERATION send-document
 
@@ -199,7 +188,6 @@
 }
 
 {
-	SKIP-IF-NOT-DEFINED HAVE_CREATE_JOB
 	SKIP-IF-NOT-DEFINED HAVE_SEND_URI
 
 	NAME "testing document-attributes in send-uri operation"
@@ -227,9 +215,6 @@
 }
 
 {
-	SKIP-IF-NOT-DEFINED HAVE_CANCEL_DOCUMENT
-	SKIP-IF-NOT-DEFINED HAVE_CREATE_JOB
-
 	NAME "testing cancel-document operation"
 	OPERATION Cancel-Document
 
@@ -249,10 +234,6 @@
 }
 
 {
-	SKIP-IF-NOT-DEFINED HAVE_GET_DOCUMENT_ATTRIBUTES
-	SKIP-IF-NOT-DEFINED HAVE_CANCEL_DOCUMENT
-	SKIP-IF-NOT-DEFINED HAVE_CREATE_JOB
-
 	NAME "Get document attributes"
 	OPERATION Get-Document-Attributes
 
