@@ -1,3 +1,4 @@
-ATTR name output-device-supported "one", "two", "three"
-ATTR keyword print-content-optimize-supported "photo", "graphics", "text", "text-and-graphics"
-ATTR keyword print-content-optimize-default "photo"
+ATTR keyword finishings-col-supported "finishing-template"
+ATTR enum finishings-supported 3,4,5,10
+
+

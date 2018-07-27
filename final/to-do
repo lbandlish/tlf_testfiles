@@ -48,6 +48,12 @@ The spec also calls out a number-up example (first copy is 4-up, remaining copie
 **  Need to remove COUNT 1 for xxx-default attributes like finishings-default. 
     (it has type 1 set of enum, and its quite logical that more than 1 finishing could be applied by default)
 
+"pwg5100.1.1.test"
+
+- finishing-template-supported could be tested for. I don't know if it should be or not.
+- job-pages-per-set-supported might also be (job-pages-per-set is not one of the finishings-supported values. Therefore I don't really know why is it in the pwg5100.1 anyway.)
+
+
 INTERESTING FACTS (MAY ACCOUNT FOR BUGS):
 
 #Test file naming convention should be:
@@ -55,3 +61,8 @@ Base tests: "pwg5100.N.test" or "rfcNNNN.test"
 Individual tests: "pwg5100.N-test-name.test" or "rfcNNNN-test-name.test"
 
 
+pwg5100.11.1.test
+
+- I have only tested xxx-supported and xxx-default attributes whenever asked to check support for xxx job-template attribute
+- Might need to check individually by sending print-jobs.
+- especially 12.2 section's first entry, i.e. job-hold-until and job-hold-until-time in Hold-job and Release-job operation.

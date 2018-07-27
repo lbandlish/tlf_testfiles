@@ -1,0 +1,34 @@
+#
+#Check a printer for conformance with pwg5100.11
+#
+#
+#Usage:
+#
+#	./ipptool printer-uri pwg5100.11.1.test
+#
+
+{
+    # get printer attributes and check support for REQUIRED attributes
+
+	NAME "Get printer attributes using Get-Printer-Attributes"
+	OPERATION Get-Printer-Attributes
+
+	GROUP operation-attributes-tag
+	ATTR charset attributes-charset utf-8
+	ATTR language attributes-natural-language en
+	ATTR uri printer-uri $uri
+
+	STATUS successful-ok
+
+    EXPECT document-metadata OF-TYPE octetString IN-GROUP operation-attributes-tag WITH-VALUE 
+    EXPECT OF-TYPE IN-GROUP 
+    EXPECT operations-supported OF-TYPE IN-GROUP 
+    EXPECT OF-TYPE IN-GROUP 
+    EXPECT OF-TYPE IN-GROUP 
+    EXPECT OF-TYPE IN-GROUP 
+    EXPECT OF-TYPE IN-GROUP 
+    EXPECT OF-TYPE IN-GROUP 
+    EXPECT OF-TYPE IN-GROUP 
+    EXPECT OF-TYPE IN-GROUP     
+
+}
