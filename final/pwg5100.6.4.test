@@ -65,7 +65,7 @@
 }
 
 {
-	NAME "Get job info with get-job-attributes and wait for job to complete"
+	NAME "Get job info with get-job-attributes"
 
 	OPERATION Get-Job-Attributes
 
@@ -125,7 +125,7 @@
 {
 	SKIP-IF-DEFINED HAVE_DOCUMENT_COPIES
 
-	NAME "Get job info with get-job-attributes and wait for job to complete"
+	NAME "Get job info with get-job-attributes"
 
 	OPERATION Get-Job-Attributes
 
@@ -255,7 +255,8 @@
 	STATUS successful-ok
 	
 	EXPECT job-uri OF-TYPE uri IN-GROUP job-attributes-tag COUNT 1 WITH-VALUE $job-uri
-	EXPECT job-state OF-TYPE enum IN-GROUP job-attributes-tag COUNT 1
+    EXPECT job-state OF-TYPE unknown|enum IN-GROUP job-attributes-tag COUNT 1 WITH-VALUE >6 REPEAT-NO-MATCH REPEAT-LIMIT 30
+    DISPLAY job-state
 
 	EXPECT overrides/pages OF-TYPE rangeOfInteger IN-GROUP job-attributes-tag WITH-VALUE 1-2 COUNT 1
 	EXPECT overrides/document-numbers OF-TYPE rangeOfInteger IN-GROUP job-attributes-tag WITH-VALUE 1-1 COUNT 1
@@ -308,7 +309,8 @@
 	STATUS successful-ok
 	
 	EXPECT job-uri OF-TYPE uri IN-GROUP job-attributes-tag COUNT 1 WITH-VALUE $job-uri
-	EXPECT job-state OF-TYPE enum IN-GROUP job-attributes-tag COUNT 1
+    EXPECT job-state OF-TYPE unknown|enum IN-GROUP job-attributes-tag COUNT 1 WITH-VALUE >6 REPEAT-NO-MATCH REPEAT-LIMIT 30
+    DISPLAY job-state
 
 	EXPECT overrides/pages OF-TYPE rangeOfInteger WITH-VALUE 1-2 COUNT 1
 	EXPECT overrides/document-numbers OF-TYPE rangeOfInteger IN-GROUP operation-attributes-tag WITH-VALUE 1-1 COUNT 1
@@ -379,7 +381,8 @@
 	STATUS successful-ok
 	
 	EXPECT job-uri OF-TYPE uri IN-GROUP job-attributes-tag COUNT 1 WITH-VALUE $job-uri
-	EXPECT job-state OF-TYPE enum IN-GROUP job-attributes-tag COUNT 1
+    EXPECT job-state OF-TYPE unknown|enum IN-GROUP job-attributes-tag COUNT 1 WITH-VALUE >6 REPEAT-NO-MATCH REPEAT-LIMIT 30
+    DISPLAY job-state
 
 	EXPECT overrides/pages OF-TYPE rangeOfInteger IN-GROUP job-attributes-tag WITH-VALUE 1-2 COUNT 1
 	EXPECT overrides/document-numbers OF-TYPE rangeOfInteger IN-GROUP job-attributes-tag WITH-VALUE 1-1 COUNT 1
@@ -445,7 +448,8 @@
 	STATUS successful-ok
 	
 	EXPECT job-uri OF-TYPE uri IN-GROUP job-attributes-tag COUNT 1 WITH-VALUE $job-uri
-	EXPECT job-state OF-TYPE enum IN-GROUP job-attributes-tag COUNT 1
+    EXPECT job-state OF-TYPE unknown|enum IN-GROUP job-attributes-tag COUNT 1 WITH-VALUE >6 REPEAT-NO-MATCH REPEAT-LIMIT 30
+    DISPLAY job-state
 
 	EXPECT overrides/pages OF-TYPE rangeOfInteger IN-GROUP job-attributes-tag WITH-VALUE 1-2 COUNT 1
 	EXPECT overrides/document-numbers OF-TYPE rangeOfInteger IN-GROUP job-attributes-tag WITH-VALUE 1-1 COUNT 2
@@ -505,7 +509,8 @@
 	STATUS successful-ok
 	
 	EXPECT job-uri OF-TYPE uri IN-GROUP job-attributes-tag COUNT 1 WITH-VALUE $job-uri
-	EXPECT job-state OF-TYPE enum IN-GROUP job-attributes-tag COUNT 1
+    EXPECT job-state OF-TYPE unknown|enum IN-GROUP job-attributes-tag COUNT 1 WITH-VALUE >6 REPEAT-NO-MATCH REPEAT-LIMIT 30
+    DISPLAY job-state
 
 	EXPECT overrides/pages OF-TYPE rangeOfInteger IN-GROUP job-attributes-tag WITH-VALUE 1-2 COUNT 1
 	EXPECT overrides/document-numbers OF-TYPE rangeOfInteger IN-GROUP job-attributes-tag WITH-VALUE 1-1 COUNT 1
@@ -561,7 +566,8 @@
 	STATUS successful-ok
 	
 	EXPECT job-uri OF-TYPE uri IN-GROUP job-attributes-tag COUNT 1 WITH-VALUE $job-uri
-	EXPECT job-state OF-TYPE enum IN-GROUP job-attributes-tag COUNT 1
+    EXPECT job-state OF-TYPE unknown|enum IN-GROUP job-attributes-tag COUNT 1 WITH-VALUE >6 REPEAT-NO-MATCH REPEAT-LIMIT 30
+    DISPLAY job-state
 
 	EXPECT overrides/pages OF-TYPE rangeOfInteger IN-GROUP job-attributes-tag WITH-VALUE 1-1 COUNT 1
 	EXPECT overrides/document-numbers OF-TYPE rangeOfInteger IN-GROUP job-attributes-tag WITH-VALUE 1-1 COUNT 1
@@ -614,7 +620,8 @@
 	STATUS successful-ok
 	
 	EXPECT job-uri OF-TYPE uri IN-GROUP job-attributes-tag COUNT 1 WITH-VALUE $job-uri
-	EXPECT job-state OF-TYPE enum IN-GROUP job-attributes-tag COUNT 1
+    EXPECT job-state OF-TYPE unknown|enum IN-GROUP job-attributes-tag COUNT 1 WITH-VALUE >6 REPEAT-NO-MATCH REPEAT-LIMIT 30
+    DISPLAY job-state
 
 	EXPECT overrides/pages OF-TYPE rangeOfInteger IN-GROUP job-attributes-tag WITH-VALUE 1-2 COUNT 1
 	EXPECT overrides/document-numbers OF-TYPE rangeOfInteger IN-GROUP job-attributes-tag WITH-VALUE 1-1 COUNT 1

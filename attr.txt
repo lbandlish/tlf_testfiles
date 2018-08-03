@@ -1,4 +1,5 @@
-ATTR keyword finishings-col-supported "finishing-template"
-ATTR enum finishings-supported 3,4,5,10
-
-
+# ATTR enum finishings-default 3
+# ATTR enum finishings-supported 3,4
+ATTR keyword sides-default "one-sided"
+ATTR keyword sides-supported "one-sided", "two-sided-long-edge"
+ATTR keyword overrides-supported "document-numbers","pages","document-copies","sides", "finishings", "media-col"
