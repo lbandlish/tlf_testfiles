@@ -43,11 +43,16 @@ I looked at many implementations of fuzz-testing to understand this concept and 
 I studied the [AFL](http://lcamtuf.coredump.cx/afl/) (American Fuzzy Lop) in detail, testing its implementation on simple C files.
 I am still working on ippfuzz at the moment.
 
+## Work to be done:
+
+* Complete testfile for PWG 5100.13-2012 | IPP: Job and Printer Extensions – Set 3 (JPS3)
+* Write code for Ippfuzz.
+
 ## Acknowledgements
 I would like to thank Mr. Michael Sweet, who wasn't officially my mentor, but the go-to person for all my queries and progress evaluation. Without him, none of the work I did would have been possible. I would also like to thank my mentors Danny, Aveek, Ira, and Smith. Thank you Danny for having those weekly meetings with me and Akash, and helping us clarify our respective doubts. Thank you Aveek for always being there whenever I faced any kind of problem and helping me throughout this time.
 
 ## Conclusion
-Google Summer of Code 2018 under The Linux Foundation has been a one-of-a-kind experience for me. I worked on something nowhere close to what I had worked on before, and learnt a lot of things along the way. Learning about fuzzing was the best thing about the project.
+Google Summer of Code 2018 under The Linux Foundation has been a one-of-a-kind experience for me. I worked on something nowhere close to what I had worked on before, and learnt a lot of things along the way. Learning about fuzzing was the best thing about the project. Overall, it was a really great experience.
 
 
 
