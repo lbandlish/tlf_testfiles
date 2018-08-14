@@ -18,6 +18,11 @@ An ipptoolfile is a file that satisfies a predefined syntax and contains all inf
 Apart from that, it also includes information to be expected in a response from the printer.
 
 ## My work
+
+Pull Request for my code into the ippsample repository:
+https://github.com/istopwg/ippsample/pull/159
+
+
 My work was to write ipptoolfiles that could check whether a printer satisifies particular IPP standards.
 Printer Manufacturers could use these files to check IPP-conformance for their printers and identify the reasons for non-conformance, if any.
 I had to write testfiles for the following standards:
@@ -42,6 +47,8 @@ This was a different program wholetogether, its motive was to [fuzz-test](https:
 I looked at many implementations of fuzz-testing to understand this concept and to devise a strategy to do this task.
 I studied the [AFL](http://lcamtuf.coredump.cx/afl/) (American Fuzzy Lop) in detail, testing its implementation on simple C files.
 I am still working on ippfuzz at the moment.
+
+
 
 ## Work to be done:
 
